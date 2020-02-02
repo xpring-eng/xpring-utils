@@ -9,6 +9,7 @@
 
 ## Overview <a name="overview"></a>
 This script automates the build process for a Xpring app. Specifically, it:
+
 - Creates a release draft for the app, which:
   - Bumps the app version (major, minor, or patch)
   - Includes all commits, authors, and date of commits in the release 
@@ -42,7 +43,7 @@ We can run through an example with [xpring-wallet-system](https://github.com/xpr
 __NOTE: This creates release DRAFTS and PRs across three repositories. Make sure to delete these if you do not intend
 to actually use them.__
 
-There are 4 main steps to build (and deploy):
+There are 4 main steps to build and deploy:
 1. Configure Environment
 2. Run Build Script 
 3. Approve Releases and Merge PRs 
@@ -51,18 +52,18 @@ There are 4 main steps to build (and deploy):
 ### Configure Environment 
 First, we need to properly set the build environment. For the wallet, this is in `wallet.env`:
 
-__App Environment__
-* `APP_REPO=xpring-eng/xpring-wallet-system` - the app repo 
-* `COMMIT_START=#279` - the commit number to start the release from
-* `APP_RELEASE_TITLE="Release $APP_VERSION - Since $COMMIT_START"` - the release title
+##### App Environment
+- `APP_REPO=xpring-eng/xpring-wallet-system` - the app repo 
+- `COMMIT_START=#279` - the commit number to start the release from
+- `APP_RELEASE_TITLE="Release $APP_VERSION - Since $COMMIT_START"` - the release title
 
-__Docker Environment__
-* `DOCKER_REPO=xpring-eng/xpring-wallet-system-docker` - the docker repo for the app
-* `DOCKER_RELEASE_TITLE="Release $DOCKER_VERSION"` - the release title
+##### Docker Environment
+- `DOCKER_REPO=xpring-eng/xpring-wallet-system-docker` - the docker repo for the app
+- `DOCKER_RELEASE_TITLE="Release $DOCKER_VERSION"` - the release title
 
-__Salt Environment__
-* `SALT_REPO=xpring-eng/xpring-salt` - the salt repo for the app/dockerfile 
-* `SALT_APP=walletsystem` - the name of the app (specifically, as named in the salt files)
+##### Salt Environment
+- `SALT_REPO=xpring-eng/xpring-salt` - the salt repo for the app/dockerfile 
+- `SALT_APP=walletsystem` - the name of the app (specifically, as named in the salt files)
 
 ### Run Build Script 
 We can now run this with a `patch` bump as follows:
@@ -73,14 +74,36 @@ If this is the first time, you may get a permissions prompt for `hub`.
 
 ### Approve Releases and Merge PRs
 After the script finishes, there should be:
-- A release draft on: https://github.com/xpring-eng/xpring-wallet-system/releases
-- A PR on: https://github.com/xpring-eng/xpring-wallet-system-docker/pulls
-- A release draft on: https://github.com/xpring-eng/xpring-wallet-system-docker/releases
-- A PR on: https://github.com/xpring-eng/xpring-salt/pulls
 
+- An app repo release draft [here](https://github.com/xpring-eng/xpring-wallet-system/releases)
+- A PR in the docker repo [here](https://github.com/xpring-eng/xpring-wallet-system-docker/pulls)
+- A docker repo release draft [here](https://github.com/xpring-eng/xpring-wallet-system-docker/releases)
+- A PR in the salt repo [here](https://github.com/xpring-eng/xpring-salt/pulls)
+
+First, double check the app release and confirm it:
+
+- Contains the proper commits in the description
+- Bumped the app version with a `v` (e.g. `v0.1.0` -> `v0.2.0`) 
+
+If all looks good, go ahead and publish the app release. Now go to the docker repo and confirm:
+
+- The PR bumped the dockerfile to the proper app version
+- The docker repo release bumped the __docker repo version__ with a `v`
+
+If all looks good, review/merge in the PR and publish docker repo release.
+
+__Before continuing, wait for the build to finish. You can observe the status [here](link TBD as we swap to
+BuildKite).__
+
+Now go to the salt repo and confirm:
+- The PR bumped the docker repo version in both the staging and production `walletsystem` files
+
+If all looks good, review/merge in the PR.
 
 ### Deploy with Chatops
-Follow 
+Follow the deploy instructions [here](https://github.com/xpring-eng/xpring-deploy/blob/master/xpring-chatops-deploys.md)
+
+And it's shipped :shipit:!
 
 ## Acknowledgements <a name="acknowledgements"></a>
 Thank you to:
