@@ -1,5 +1,6 @@
-# Xpring Build & Deploy
+# xpring-scripts
 
-## Build 
+Utility scripts for Xpring engineers.
 
-## Deploy
+## Scripts
+* `build.sh` - Build Xpring app(s)

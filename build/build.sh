@@ -3,17 +3,6 @@
 ### author: https://github.com/dino-rodriguez
 
 ### helpers
-# clone, branch, get and bump version
-function prep() {
-  repo=$1
-  increment=$2
-
-  version=v$(git describe --tags | xargs ../semver.sh bump $increment)
-  git checkout -b $version
-  
-  echo $version
-}
-
 # add, commit, push, open PR for repo
 function ship() {
   repo=$1
@@ -36,9 +25,9 @@ function create_release() {
   title=$3
   message=$4
 
-  git clone git@github.com:xpring-eng/$repo.git
+  git clone git@github.com:$repo.git
   cd $repo
-  version=$(prep $repo $increment)
+  version=v$(git describe --tags | xargs ../semver.sh bump $increment)
 
   # only get commit history for apps 
   exp="#[0-9]"
@@ -47,7 +36,7 @@ function create_release() {
   fi
 
   # create release (as draft)
-  hub release create -d -m "$title" -m "$message" $version
+  hub release create -d -m "$title" -m "$message" $version > /dev/null
   cd .. && rm -rf $repo
 
   echo $version
@@ -60,12 +49,12 @@ function update_version_in_dockerfile() {
   app_version=$2
   docker_version=$3
 
-  git clone git@github.com:xpring-eng/$repo.git
+  git clone git@github.com:$repo.git
   cd $repo
   git checkout -b $docker_version
 
   # update version in Dockerfile
-  sed -i '' -E "s/v[0-9]+\.[0-9]+\.[0-9]+/${app_version}/g"
+  sed -i '' -E "s/v[0-9]+\.[0-9]+\.[0-9]+/${app_version}/g" Dockerfile
 
   ship $repo $docker_version
 }
@@ -77,7 +66,7 @@ function update_version_in_salt() {
   version=$2
   app=$3
 
-  git clone git@github.com:xpring-eng/$repo.git
+  git clone git@github.com:$repo.git
   cd $repo
   git checkout -b $version
 
@@ -94,7 +83,7 @@ source $1
 increment=$2
 
 # build
-# app_version=$(create_release $APP_REPO $increment "$APP_RELEASE_TITLE" "$COMMIT_START" | tee /dev/tty)
-# docker_version=$(create_release $DOCKER_REPO $increment "$DOCKER_RELEASE_TITLE" "App Version: $app_version" | tee /dev/tty)
+app_version=$(create_release $APP_REPO $increment "$APP_RELEASE_TITLE" "$COMMIT_START")
+docker_version=$(create_release $DOCKER_REPO $increment "$DOCKER_RELEASE_TITLE" "App Version: $app_version")
 update_version_in_dockerfile $DOCKER_REPO $app_version $docker_version
-# update_version_in_salt $SALT_REPO $docker_version $SALT_APP
+update_version_in_salt $SALT_REPO $docker_version $SALT_APP
