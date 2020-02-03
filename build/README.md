@@ -13,9 +13,9 @@ This script automates the build process for a Xpring app. Specifically, it:
 - Creates a release draft for the app, which:
   - Bumps the app version (major, minor, or patch)
   - Includes all commits, authors, and date of commits in the release 
-- Updates the app version in the dockerfile and makes a pull request
-- Creates a draft release for the dockerfile for the app
-- Updates the dockerfile version in the salt file(s) and makes a pull request
+- Updates the app version in the Dockerfile and makes a pull request
+- Creates a draft release for the Dockerfile for the app
+- Updates the Dockerfile version in the salt file(s) and makes a pull request
 
 ## Installation <a name="installation"></a>
 This uses Github's cli tool, `hub`. To install using homebrew:
@@ -25,7 +25,7 @@ This uses Github's cli tool, `hub`. To install using homebrew:
 For other installation options, refer to the [hub README](https://github.com/github/hub). On the first run, you will need to
 authenticate hub with your github credentials.
 
-You will also need read/write permissions to all the relevant app, dockerfile, and salt repos.
+You will also need read/write permissions to all the relevant app, Dockerfile, and salt repos.
 
 ## Usage <a name="usage"></a>
 From within the `build` directory, run:
@@ -63,6 +63,7 @@ First, we need to properly set the build environment. For the wallet, this is in
 
 ##### Salt Environment
 - `SALT_REPO=xpring-eng/xpring-salt` - the salt repo for the app/dockerfile 
+
 - `SALT_APP=walletsystem` - the name of the app (specifically, as named in the salt files)
 
 ### Run Build Script 
@@ -87,7 +88,7 @@ First, double check the app release and confirm it:
 
 If all looks good, go ahead and publish the app release. Now go to the docker repo and confirm:
 
-- The PR bumped the dockerfile to the proper app version
+- The PR bumped the Dockerfile to the proper app version
 - The docker repo release bumped the __docker repo version__ with a `v`
 
 If all looks good, review/merge in the PR and publish docker repo release.
