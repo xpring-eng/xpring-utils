@@ -25,7 +25,7 @@ function create_release() {
   title=$3
   message=$4
 
-  git clone git@github.com:$repo.git
+  git clone git@github.com:xpring-eng/$repo.git
   cd $repo
   version=v$(git describe --tags | xargs ../semver.sh bump $increment)
 
@@ -49,7 +49,7 @@ function update_version_in_dockerfile() {
   app_version=$2
   docker_version=$3
 
-  git clone git@github.com:$repo.git
+  git clone git@github.com:xpring-eng/$repo.git
   cd $repo
   git checkout -b $docker_version
 
@@ -66,7 +66,7 @@ function update_version_in_salt() {
   version=$2
   app=$3
 
-  git clone git@github.com:$repo.git
+  git clone git@github.com:xpring-eng/$repo.git
   cd $repo
   git checkout -b $version
 
